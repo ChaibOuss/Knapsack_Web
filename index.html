@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<title>Sac à dos</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./index.css">
+<style>
+@font-face {
+    font-family: 'Raleway';
+    src: URL('/res/Raleway/Raleway-Medium.ttf') format('truetype');
+}
+body,h1 {font-family: "Raleway", sans-serif; color: white}
+body, html {height: 100%}
+input{
+  border-radius: 0%; 
+  background-color: transparent; 
+  border-top: 0px;
+  border-right: 0px;
+  border-left: 0px;
+  border-bottom-color: #fff;
+  color: #fff;
+  font-weight: bold;
+  width: 10%;
+  text-align: center;
+  margin-top: 5px;
+  }
+input:focus{
+  color: #e84118;
+  border-block-color: #e84118;
+}
+.bgimg {
+  background-image: url("./res/sac1.jpg");
+  min-height: 100%;
+  min-width: 100%;
+  background-position: center;
+  background-size: cover;
+}
+.box{
+    width: 70%;
+    height: 80%;
+    background: rgba(0, 0, 0, 0.7);
+    color: #dcdde1;
+    text-align: center;
+    border: 0.1 solid black;
+    font-family: "Raleway";
+    overflow: hidden;
+}
+.styled-button{
+    background-color: #e84118;
+    font-family: "Raleway";
+    color: white;
+    border: 0;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+</style>
+<body>
+
+    <div class = "bgimg">
+            <div class = "box w3-display-middle">
+                <h1 class = "w3-animate-top" style = "color: #fff;">
+                    Problème du sac à dos
+                </h1>
+                <div style = "margin-top: 40px;">
+                  <label>Le poids max du sac à dos<br/></label>
+                  <input id = "w" type="number" min="0" step="1"/>
+                </div>
+                <div style = "margin-top: 40px;">
+                  <label>Objets<br/></label>
+                  <label>Poids</label>
+                  <input  id = "poids" 
+                          type = "number" min = "0" step = "1"/><br/>
+                  <label>Valeur</label>
+                  <input  id = "valeur" 
+                          type = "number" min = "0" step = "1"/><br>
+                  <button class="styled-button"
+                          onclick = "addParams()">Ajouter object</button>
+                </div>
+                <div>
+                  <button class="styled-button"
+                          style="color: #e84118; background-color: white;"
+                          onclick="verify()">
+                    Valider
+                  </button>
+                </div>
+                <div id = "result">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+      var w = 0,  poids = new Array(), valeurs = new Array(),
+          tab, x = [], nb = 0, i = 0, j = 0;
+
+      function addParams(){
+        nb++
+        poids.push(parseInt(document.getElementById("poids").value, 10))
+        valeurs.push(parseInt(document.getElementById("valeur").value, 10))
+        w = 0;
+      }
+
+      
+
+      function verify(){
+        function max(a,b){
+        return (a > b) ? a : b;
+      }
+        w = 0;
+        w = parseInt(document.getElementById("w").value, 10);
+        console.log(w);
+        console.log(nb);
+        console.log(poids);
+        console.log(valeurs);
+        tab = [nb+1];
+        for(let y = 0; y <= nb; y++){
+          tab[y] = [w+1]
+          for(let l = 0; l <= w; l++){
+            tab[y][l] = 0
+          }
+        }
+        for(let i = 0; i <= nb; i++){
+          for(let j = 0; j <= w; j++){
+            if(i === 0 || j === 0)
+              tab[i][j] = 0
+              else if(poids[i-1] > j){
+                tab[i][j] = tab[i-1][j]
+              }else{
+                let h = i-1
+                let p = j - poids[i-1]
+                tab[i][j] = Math.max(valeurs[h] + tab[h][p],tab[h][j])
+              }
+          }
+        }
+        console.log(tab)
+        var max = tab[nb][w]
+        console.log(max)
+        c = nb
+        x = [nb]
+        while(c > 0 && w > 0){
+          if(tab[c][w] === tab[c-1][w]){
+            x[c-1] = 0
+          }else{
+            x[c-1] = 1
+            w = w - poids[c-1]
+          }
+          c--
+        }
+        console.log(x)
+        var items = "<h4> Les elements pris : <br/>"
+        for(let i = 0; i < nb; i++){
+          if(x[i] === 1)
+          items = items + " Objet "+ (i+1) + " -"
+        }
+        items = items.substring(0, items.length-1)
+        items = items + " <br/>"
+        items = items + "La valeur totale des elements est : " + max
+        items += "</h4>"
+        document.getElementById("result").innerHTML = items  
+        console.log(tab)      
+      }
+    </script>
+</body>
+</html>
